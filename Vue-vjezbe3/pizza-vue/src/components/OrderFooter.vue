@@ -12,6 +12,11 @@ const narucene_pizze = ref([]);
 const odabranaVelicina = ref('mala');
 const kolicina = ref(1);
 
+const prezime = ref('');
+const adresa = ref('');
+const telefon = ref(''); 
+const statusNarudzbe = ref('');       
+
 function dodajUNarudzbu() {
     const novaStavka = {
         naziv: props.odabranaPizza.naziv,
@@ -20,6 +25,9 @@ function dodajUNarudzbu() {
     };
     narucene_pizze.value.push(novaStavka); 
     console.log('Naručene pizze:', narucene_pizze.value);
+}
+function obrisiStavku(index) {
+    narucene_pizze.value.splice(index, 1);
 }
 const ukupna_cijena_stavke = computed(() => {
     const cijenaPoKomadu = props.odabranaPizza.cijene[odabranaVelicina.value];
@@ -30,24 +38,34 @@ const emit = defineEmits(['close']);
 async function posaljiNarudzbu() {
     try {
         if (narucene_pizze.value.length === 0) {
-            alert('Košarica je prazna! Molimo dodajte pizze prije narudžbe.');
+            statusNarudzbe.value = 'Košarica je prazna! Molimo dodajte pizze prije narudžbe.';
+            return;
+        }
+        if (!prezime.value || !adresa.value || !telefon.value) {
+            statusNarudzbe.value = 'Molimo unesite prezime, adresu i broj telefona';
             return;
         }
         const podaciZaDostavu = {
-            prezime: 'Pilić',
-            adresa: 'Ilica 305, Zagreb',
-            telefon: '091234567'
+            prezime: prezime.value,
+            adresa: adresa.value,
+            telefon: telefon.value
         };
         const odgovor = await axios.post('http://localhost:3000/narudzbe', {
             narucene_pizze: narucene_pizze.value,
             podaci_dostava: podaciZaDostavu
         });
-        console.log('Narudžba uspješno poslana:', odgovor.data);
-        alert('Hvala! Vaša narudžba je uspješno poslana.');
+        statusNarudzbe.value = odgovor.data.message;
+
         narucene_pizze.value = [];
+        prezime.value = '';
+        adresa.value = '';
+        telefon.value = '';
     } catch (error) {
-        console.error('Greška pri slanju narudžbe:', error);
-        alert('Došlo je do greške pri slanju narudžbe. Molimo pokušajte ponovno.');
+        if(error.response && error.response.data) {
+            statusNarudzbe.value = error.response.data.message;
+        } else {
+            statusNarudzbe.value = 'Došlo je do greške pri slanju narudžbe. Molimo pokušajte ponovno.';
+        }
     }
 }
 </script>
@@ -102,6 +120,13 @@ async function posaljiNarudzbu() {
         </button>
     </div>
 
+    <div class="mt-4 space-y-3">
+        <h4 class="font-semibold text-lg text-white">Podaci za dostavu:</h4>
+        <input v-model="prezime" type="text" placeholder="Prezime" class="w-full px-3 rounded-md border border-slate-700 text-white" />
+        <input v-model="adresa" type="text" placeholder="Adresa" class="w-full px-3 rounded-md border border-slate-700 text-white" />
+        <input v-model="telefon" type="text" placeholder="Telefon" class="w-full px-3 rounded-md border border-slate-700 text-white" />
+    </div>
+
     <div v-if="narucene_pizze.length"
         class="mt-4 max-w-2xl mx-auto max-h-40 overflow-y-auto bg-slate-800/50 rounded-lg p-3 border-slate-600">
         <h4 class="font-semibold text-lg text-white mb-2">Stavke u košarici:</h4>
@@ -112,8 +137,11 @@ async function posaljiNarudzbu() {
                 <div class="text-white">
                     {{ stavka.naziv }} ({{ stavka.velicina }}) x{{ stavka.kolicina }}
                 </div>
-                <div class="text-orange-400 font-semibold">
-                    {{ (props.odabranaPizza.cijene[stavka.velicina] * stavka.kolicina).toFixed(2)}}€
+                <div class="flex items-center gap-3">
+                    <div class="text-orange-400 font-semibold">
+                        {{ (props.odabranaPizza.cijene[stavka.velicina] * stavka.kolicina).toFixed(2)}}€
+                    </div>
+                    <button @click="obrisiStavku(index)" class="text-red-400 hover:text-red-600 font-bold cursor-pointer">x</button>
                 </div>
             </li>
         </ul>

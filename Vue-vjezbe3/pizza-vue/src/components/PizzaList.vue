@@ -5,6 +5,7 @@ import OrderFooter from './OrderFooter.vue';
 import { addIcons } from 'oh-vue-icons';
 import { GiTomato, GiCheeseWedge, GiSlicedMushroom, IoLeafSharp, CoHotjar, GiMilkCarton,
 GiBellPepper, LaPepperHotSolid, GiCannedFish, GiGarlic, FaBacon, GiHamShank } from 'oh-vue-icons/icons';
+import { useRouter } from 'vue-router';
 
 addIcons(GiTomato, GiCheeseWedge, GiSlicedMushroom, IoLeafSharp, GiBellPepper, GiHamShank,
 LaPepperHotSolid, GiCannedFish, GiGarlic, FaBacon, CoHotjar, GiMilkCarton);
@@ -22,7 +23,8 @@ const ikoneSastojaka = {
     vrhnje: 'gi-milk-carton'
 };
 
-const odabrana_pizza = ref(null);
+const router = useRouter();
+const odabranaPizza = ref(null);
 const pizze = ref([]);
 
 async function fetchPizze() {
@@ -39,8 +41,10 @@ onMounted(() => {
 });
 
 function odaberiPizzu(pizza) {
-    odabrana_pizza.value = pizza; 
-    console.log('Odabrana pizza:', pizza);
+    odabranaPizza.value = pizza;
+}
+function prikaziDetalje(pizza) {
+    router.push(`/pizze/${pizza.naziv}`);
 }
 </script>
 <template>
@@ -50,12 +54,7 @@ function odaberiPizzu(pizza) {
                 v-for="pizza in pizze"
                 :key="pizza.id"
                 @click="odaberiPizzu(pizza)" 
-                :class="[
-                    'bg-inherit rounded-xl overflow-hidden cursor-pointer transition-all duration-300',
-                    odabrana_pizza?.naziv === pizza.naziv 
-                        ? 'ring-4 ring-orange-300 shadow-lg shadow-orange-300/50 scale-[1.02]' 
-                        : 'hover:scale-[1.01]', 
-                ]">
+                class="bg-inherit rounded-xl overflow-hidden cursor-pointer transition-all duration-300">
                 <div class="w-full h-48 flex items-center justify-center bg-inherit overflow-hidden rounded-xl">
                     <img :src="pizza.slika_url" :alt="pizza.naziv" class="w-full h-full object-cover" />
                 </div>
@@ -90,9 +89,18 @@ function odaberiPizzu(pizza) {
                             <span>€{{ pizza.cijene.jumbo }}</span>
                         </div>
                     </div>
+                    <div class="flex justify-between mt-4">
+                        <button @click="prikaziDetalje(pizza)" class="bg-blue-500 text-white py-1 px-3 rounded">
+                            Detalji
+                        </button>
+
+                        <button @click="odaberiPizzu(pizza)" class="bg-green-500 text-white py-1 px-3 rounded">
+                            Dodaj u košaricu
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <OrderFooter v-if="odabrana_pizza" :odabrana-pizza="odabrana_pizza" @close="odabrana_pizza = null" />
+    <OrderFooter v-if="odabranaPizza" :odabrana-pizza="odabranaPizza" @close="odabranaPizza = null" />
 </template>
