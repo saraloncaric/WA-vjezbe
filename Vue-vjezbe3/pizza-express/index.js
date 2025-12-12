@@ -13,7 +13,7 @@ const PORT = 3000;
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/pizze', pizza);
-app.use('/narudzba', narudzba);
+app.use('/narudzbe', narudzba);
 app.use(cors());
 
 app.get('/', (req, res) => {

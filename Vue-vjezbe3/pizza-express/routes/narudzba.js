@@ -1,14 +1,13 @@
 import express from 'express';
-import { narudzbe, pizze } from '../data/data.js'; // učitavanje dummy podataka
+import { narudzbe, pizze } from '../data/data.js'; 
 const router = express.Router();
 
-// POST /narudzbe - Izrada nove narudžbe pizza
 router.post('/', (req, res) => {
+    console.log('Primljeni podaci narudžbe:', req.body);
     const { narucene_pizze, podaci_dostava } = req.body;
     if (!narucene_pizze || narucene_pizze.length === 0) {
         return res.status(400).json({ message: 'Nisu specificirane naručene pizze.' });
     }
-    // Izračun ukupne cijene narudžbe
     let ukupna_cijena = 0;
     for (const narucena of narucene_pizze) {
         const pizza = pizze.find(p => p.naziv.toLowerCase() ===
@@ -24,6 +23,12 @@ router.post('/', (req, res) => {
         }
         ukupna_cijena += cijena * narucena.kolicina;
     }
-    ukupna_cijena = Number(ukupna_cijena.toFixed(2)); // zaokruživanje ukupne cijene na 2 decimale
+    ukupna_cijena = Number(ukupna_cijena.toFixed(2)); 
+    res.status(201).json({
+        message: 'Narudžba zaprimljena!',
+        ukupna_cijena,
+        narucene_pizze,
+        podaci_dostava
+    })
 });
 export default router;

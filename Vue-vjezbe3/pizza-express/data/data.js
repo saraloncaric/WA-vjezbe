@@ -29,9 +29,7 @@ export const narudzbe = [
     {
         id: 1,
         narucene_pizze: [
-        // svaka narudžba sastoji se od jedne ili više naručenih pizza
             {
-            // za svaku naručenu pizzu bilježimo naziv, naručenu veličinu i količinu
                 naziv: 'Margherita',
                 velicina: 'srednja',
                 kolicina: 2
@@ -42,11 +40,9 @@ export const narudzbe = [
                 kolicina: 1
             }
         ],
-        ukupna_cijena: 40.6, // ukupnu cijenu narudžbe računamo na poslužitelju
-        podaci_dostava: {
+        ukupna_cijena: 40.6, 
             prezime: 'Perić',
             adresa: 'Zagrebačka 15, Pula',
             telefon: '091234567'
-        }
     }
 ];

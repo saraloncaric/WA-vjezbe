@@ -1,12 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import OrderFooter from './OrderFooter.vue';
 import { addIcons } from 'oh-vue-icons';
-// uvoz potrebnih ikona
 import { GiTomato, GiCheeseWedge, GiSlicedMushroom, IoLeafSharp, CoHotjar, GiMilkCarton,
 GiBellPepper, LaPepperHotSolid, GiCannedFish, GiGarlic, FaBacon, GiHamShank } from 'oh-vue-icons/icons';
 
-// registracija ikona koje ćemo koristiti
 addIcons(GiTomato, GiCheeseWedge, GiSlicedMushroom, IoLeafSharp, GiBellPepper, GiHamShank,
 LaPepperHotSolid, GiCannedFish, GiGarlic, FaBacon, CoHotjar, GiMilkCarton);
 
@@ -16,10 +15,8 @@ const ikoneSastojaka = {
     gljive: 'gi-sliced-mushroom',
     bosiljak: 'io-leaf-sharp',
     paprika: 'gi-bell-pepper',
-    šunka: 'gi-ham-shank',
-    'feferoni ljuti': 'la-pepper-hot-solid',
-    tunjevina: 'gi-canned-fish',
-    'crveni luk': 'gi-garlic',
+    šunka: 'gi-ham-shank', 'feferoni ljuti': 'la-pepper-hot-solid',
+    tunjevina: 'gi-canned-fish', 'crveni luk': 'gi-garlic',
     panceta: 'fa-bacon',
     kulen: 'co-hotjar',
     vrhnje: 'gi-milk-carton'
@@ -28,24 +25,23 @@ const ikoneSastojaka = {
 const odabrana_pizza = ref(null);
 const pizze = ref([]);
 
-function odaberiPizzu(pizza_naziv) {
-    odabrana_pizza.value = pizza_naziv; // postavljanje naziva odabrane pizze
-    console.log('Odabrana pizza:', odabrana_pizza.value); // ispis u konzolu
-}
-
 async function fetchPizze() {
     try {
-        const response = await axios.get('http://localhost:3000/pizze'); // dodajemo await kako bi sačekali odgovor asiknrone funkcije
-        pizze.value = response.data; // pohrana podataka o pizzama u reaktivnu varijablu
-        console.log(pizze.value); // ispisuje podatke o pizzama nakon dohvaćanja HTTP odgovora
+        const response = await axios.get('http://localhost:3000/pizze'); 
+        pizze.value = response.data;
+        console.log(pizze.value); 
     } catch (error) {
         console.error('Greška pri dohvaćanju podataka o pizzama:', error);
     }
 }
-// u ovom slučaju onMounted ne treba biti async zato što ne koristimo await direktno unutar njega
 onMounted(() => {
-    fetchPizze(); // pozivanje funkcije za dohvaćanje podataka o pizzama
+    fetchPizze(); 
 });
+
+function odaberiPizzu(pizza) {
+    odabrana_pizza.value = pizza; 
+    console.log('Odabrana pizza:', pizza);
+}
 </script>
 <template>
     <div class="mx-auto bg-linear-to-br min-h-screen p-8 bg-[url('/background.png')] bg-cover bg-center bg-no-repeat">
@@ -53,10 +49,10 @@ onMounted(() => {
             <div 
                 v-for="pizza in pizze"
                 :key="pizza.id"
-                @click="odaberiPizzu(pizza.naziv)" 
+                @click="odaberiPizzu(pizza)" 
                 :class="[
                     'bg-inherit rounded-xl overflow-hidden cursor-pointer transition-all duration-300',
-                    odabrana_pizza === pizza.naziv 
+                    odabrana_pizza?.naziv === pizza.naziv 
                         ? 'ring-4 ring-orange-300 shadow-lg shadow-orange-300/50 scale-[1.02]' 
                         : 'hover:scale-[1.01]', 
                 ]">
@@ -98,4 +94,5 @@ onMounted(() => {
             </div>
         </div>
     </div>
+    <OrderFooter v-if="odabrana_pizza" :odabrana-pizza="odabrana_pizza" @close="odabrana_pizza = null" />
 </template>
