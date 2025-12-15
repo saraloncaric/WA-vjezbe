@@ -1,0 +1,51 @@
+[
+    {
+        "id":1,
+        "ime":"Ana",
+        "prezime":"Kovač",
+        "godine_staža":12,
+        "pozicija":"Direktor"
+    },
+    {
+        "id":2,
+        "ime":"Marko",
+        "prezime":"Horvat",
+        "godine_staža":8,
+        "pozicija":"Voditelj projekata"
+    },
+    {
+        "id":3,
+        "ime":"Ivana",
+        "prezime":"Babić",
+        "godine_staža":5,
+        "pozicija":"Programer"
+    },
+    {
+        "id":4,
+        "ime":"Petar",
+        "prezime":"Novak",
+        "godine_staža":3,
+        "pozicija":"Dizajner"
+    },
+    {
+        "id":5,
+        "ime":"Marija",
+        "prezime":"Jurić",
+        "godine_staža":10,
+        "pozicija":"HR stručnjak"
+    },
+    {
+        "id":6,
+        "ime":"Luka",
+        "prezime":"Grgić",
+        "godine_staža":7,
+        "pozicija":"Financijski analitičar"
+    },
+    {
+        "id":7,
+        "ime":"Tea",
+        "prezime":"Radić",
+        "godine_staža":2,
+        "pozicija":"Marketing specijalist"
+    }
+]
