@@ -27,11 +27,28 @@ const router = useRouter();
 const odabranaPizza = ref(null);
 const pizze = ref([]);
 
+const trazilica_naziv = ref('');
+const cijena_min = ref('');
+const cijena_max = ref('');
+const sortirano = ref('');
+
 async function fetchPizze() {
     try {
-        const response = await axios.get('http://localhost:3000/pizze'); 
+        const parametri = {};
+        if (trazilica_naziv.value) {
+            parametri.naziv = trazilica_naziv.value;
+        }
+        if (cijena_min.value) {
+            parametri.cijena_min = cijena_min.value;
+        }
+        if (cijena_max.value) {
+            parametri.cijena_max = cijena_max.value;
+        }
+        if (sortirano.value) {
+            parametri.sort = sortirano.value === 'asc' ? 1 : -1;
+        }
+        const response = await axios.get('http://localhost:3000/pizze', { params: parametri }); 
         pizze.value = response.data;
-        console.log(pizze.value); 
     } catch (error) {
         console.error('Greška pri dohvaćanju podataka o pizzama:', error);
     }
@@ -49,6 +66,40 @@ function prikaziDetalje(pizza) {
 </script>
 <template>
     <div class="mx-auto bg-linear-to-br min-h-screen p-8 bg-[url('/background.png')] bg-cover bg-center bg-no-repeat">
+        <div class="mb-6 flex flex-wrap gap-4 items-end bg-white/80 p-4 rounded-xl">
+            <div>
+                <label class="block text-sm font-medium mb-1">Naziv</label>
+                <input v-model="trazilica_naziv" class="p-2 rounded border border-gray-300" />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1">Min cijena</label>
+                <input v-model="cijena_min" type="number" step="0.01" class="p-2 rounded border border-gray-300" />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1">Max cijena</label>
+                <input v-model="cijena_max" type="number" step="0.01" class="p-2 rounded border border-gray-300" />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1">Sortiraj po cijeni</label>
+                <select v-model="sortirano" class="p-2 rounded border border-gray-300">
+                    <option value="">Bez sortiranja</option>
+                    <option value="asc">Najjeftinije prvo</option>
+                    <option value="desc">Najskuplje prvo</option>
+                </select>
+            </div>
+
+            <button @click="fetchPizze"
+                class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-6 rounded transition-colors">
+                Pretraži
+            </button>
+        </div>
+
+        <div v-if="pizze.length === 0" class="text-center py-12 bg-white/80 rounded-xl">
+            <p class="text-xl text-gray-600">Nema pizza koje odgovaraju kriterijima pretrage.</p>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <div 
                 v-for="pizza in pizze"

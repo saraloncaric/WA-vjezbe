@@ -2,12 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import pizza from './routes/pizza.js';
 import narudzba from './routes/narudzba.js';
+import { connectToDatabase } from './db.js';
 
 const corsOptions = {
     origin: ['http://localhost:5173', 'http://example.com', 'http://mydomain.com']
 };
 
 const app = express();
+
+let db = await connectToDatabase();
+
 const PORT = 3000;
 
 app.use(cors(corsOptions));
